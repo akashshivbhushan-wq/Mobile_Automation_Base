@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Magenative</title></head>
+<body>
+<h1>Upload APK & Start Test</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="apkFile" accept=".apk" required />
+    <button type="submit">Start Testing</button>
+</form>
+<script>
+document.getElementById('uploadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    let formData = new FormData(this);
+    fetch('/apk-upload', { method: 'POST', body: formData })
+        .then(res => res.text())
+        .then(data => alert(data))
+        .catch(err => alert('Error: ' + err));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<suite name="Automation Suite - Extent Reports">
+    <listeners>
+        <listener class-name="mazenative.automation.listeners.TestListener"/>
+    </listeners>
+
+    <test name="App Tests">
+        <classes>
+            <class name="mazenative.automation.Test1"/>
+        </classes>
+    </test>
+</suite>
+

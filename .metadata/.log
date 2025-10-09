@@ -1,0 +1,91 @@
+!SESSION 2025-09-19 15:38:59.970 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:39:01.594
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:39:02.683
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:41:28.530 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data file:/C:/Users/AkashShivBhushan2442/Desktop/MazeNative/automation/
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:41:30.390
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:41:31.582
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:45:56.736 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:45:58.556
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:45:59.787
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:46:23.822 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:46:25.253
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:46:26.543
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:46:44.373 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:46:45.847
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:46:46.976
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:47:06.601 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:47:08.480
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:47:09.711
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
+!SESSION 2025-09-19 15:48:21.825 -----------------------------------------------
+eclipse.buildId=4.36.0.20250605-1300
+java.version=21.0.8
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:48:23.651
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2025-09-19 15:48:25.128
+!MESSAGE Logback config file: C:\Users\AkashShivBhushan2442\Desktop\MazeNative\automation\.metadata\.plugins\org.eclipse.m2e.logback\logback.2.7.100.20250418-1315.xml
