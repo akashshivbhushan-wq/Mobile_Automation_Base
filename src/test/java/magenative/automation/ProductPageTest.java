@@ -1,4 +1,4 @@
-package mazenative.automation;
+package magenative.automation;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;

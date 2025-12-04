@@ -16,6 +16,7 @@ import org.testng.ITestResult;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 
@@ -27,26 +28,22 @@ public class TestListener implements ITestListener {
     @Override
     public void onStart(ITestContext context) {
         try {
-            // Workspace resolve (Jenkins/local)
             String workspace = System.getenv("WORKSPACE");
             if (workspace == null || workspace.isEmpty()) {
                 workspace = System.getProperty("user.dir");
             }
 
-            // Report folder
             String reportFolder = workspace + File.separator + "test-output" + File.separator + "ExtentReport";
             File reportDir = new File(reportFolder);
             if (!reportDir.exists()) reportDir.mkdirs();
 
-            // Report file
             String reportPath = reportFolder + File.separator + "index.html";
 
-            // Spark Reporter
             ExtentSparkReporter spark = new ExtentSparkReporter(reportPath);
             spark.config().setDocumentTitle("Automation Test Report");
             spark.config().setReportName("Regression Suite Execution");
             spark.config().setTheme(Theme.DARK);
-          //  spark.config().setTimelineEnabled(true); // flow/timeline chart
+            spark.config().setTimelineEnabled(true); // Timeline chart enabled ✅
 
             extent = new ExtentReports();
             extent.attachReporter(spark);
@@ -67,16 +64,24 @@ public class TestListener implements ITestListener {
         ExtentTest extentTest = extent.createTest(result.getMethod().getMethodName())
                 .assignCategory(result.getTestClass().getName());
         test.set(extentTest);
+        System.out.println("🟡 Test Started: " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        test.get().pass("✅ Test Passed");
+        if (test.get() != null) {
+            test.get().log(Status.PASS, "✅ Test Passed: " + result.getMethod().getMethodName());
+        } else {
+            System.out.println("⚠️ [Listener] Test reference missing for: " + result.getMethod().getMethodName());
+        }
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        test.get().fail(result.getThrowable());
+        if (test.get() != null) {
+            test.get().log(Status.FAIL, "❌ Test Failed: " + result.getMethod().getMethodName());
+            test.get().fail(result.getThrowable());
+        }
 
         try {
             Object testClassInstance = result.getInstance();
@@ -86,26 +91,37 @@ public class TestListener implements ITestListener {
 
             if (driver != null) {
                 String screenshotPath = captureScreenshot(driver, result.getMethod().getMethodName());
-                test.get().addScreenCaptureFromPath(screenshotPath, "Failure Screenshot");
+                if (test.get() != null) {
+                    test.get().addScreenCaptureFromPath(screenshotPath, "Failure Screenshot");
+                }
             }
         } catch (Exception e) {
+            System.out.println("⚠️ Screenshot capture failed for: " + result.getMethod().getMethodName());
             e.printStackTrace();
         }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        test.get().skip("⏭ Test Skipped: " + result.getThrowable());
+        if (test.get() != null) {
+            test.get().log(Status.SKIP, "⏭ Test Skipped: " + result.getMethod().getMethodName());
+            if (result.getThrowable() != null) {
+                test.get().skip(result.getThrowable());
+            }
+        } else {
+            System.out.println("⚠️ [Listener] Test reference missing for skipped test: " + result.getMethod().getMethodName());
+        }
     }
 
     @Override
     public void onFinish(ITestContext context) {
         if (extent != null) {
             extent.flush();
+            System.out.println("📘 Extent report flushed successfully.");
         }
     }
 
-    // Screenshot method
+    // 📸 Capture Screenshot Utility
     public String captureScreenshot(WebDriver driver, String methodName) throws IOException {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
 

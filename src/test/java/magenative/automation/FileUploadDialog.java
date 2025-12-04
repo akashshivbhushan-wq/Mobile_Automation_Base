@@ -1,4 +1,4 @@
-package mazenative.automation;
+package magenative.automation;
 
 import javax.swing.*;
 import java.io.File;

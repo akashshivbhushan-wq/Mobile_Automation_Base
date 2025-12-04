@@ -1,4 +1,4 @@
-package mazenative.automation;
+package magenative.automation;
 
 
 

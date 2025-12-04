@@ -1,4 +1,4 @@
-package mazenative.automation;
+package magenative.automation;
 
 import java.util.List;
 import org.openqa.selenium.By;
