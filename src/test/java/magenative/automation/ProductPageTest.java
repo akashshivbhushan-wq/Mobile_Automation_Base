@@ -17,8 +17,16 @@ public class ProductPageTest {
     WebDriverWait wait;
 
     // --- Common Locators (Works for all apps) ---
+    // Some app builds expose product/card images via content-desc="image"
+    // (accessibility id); others (e.g. York Laine) never set a content-desc at
+    // all and instead only expose them via resource-id ".../id/image". Try the
+    // accessibility-id form first, then fall back to the resource-id form,
+    // excluding the bottom nav bar so we don't click a nav icon by mistake.
     private By productFromHome = AppiumBy.androidUIAutomator(
             "new UiSelector().description(\"image\").instance(0)"
+    );
+    private By productFromHomeFallback = By.xpath(
+            "//*[contains(@resource-id,':id/image') and not(ancestor::*[contains(@resource-id,'nav_view')])]"
     );
     private By productImage = AppiumBy.accessibilityId("image");
     private By productNamePriceLayout = By.xpath("//*[contains(@resource-id,'quantitylayout')]");
@@ -37,7 +45,15 @@ public class ProductPageTest {
     // ========== CLICK PRODUCT FROM HOMEPAGE (Smart Detection) ==========
     public void clickProductFromHome() {
         try {
-            WebElement product = wait.until(ExpectedConditions.elementToBeClickable(productFromHome));
+            // Reset scroll position first — carousels/testimonial sections can
+            // leave the home page scrolled away from the product grid, which
+            // otherwise makes this look like "no product found" for 30s.
+            try {
+                driver.findElement(AppiumBy.androidUIAutomator(
+                        "new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning(10)"));
+            } catch (Exception ignored) {}
+
+            WebElement product = findClickableProductOnHome();
             product.click();
             sleep(2000);
             System.out.println("✅ Product clicked from homepage");
@@ -55,8 +71,19 @@ public class ProductPageTest {
         }
     }
 
+    // --- Find a clickable product/card image on the home page, trying the
+    // accessibility-id locator first and the resource-id fallback second. ---
+    private WebElement findClickableProductOnHome() {
+        try {
+            return wait.until(ExpectedConditions.elementToBeClickable(productFromHome));
+        } catch (Exception e) {
+            System.out.println("ℹ️ No content-desc=\"image\" element found, trying resource-id fallback...");
+            return wait.until(ExpectedConditions.elementToBeClickable(productFromHomeFallback));
+        }
+    }
+
     // --- Detect if current page is Product Detail Page (PDP) ---
-    private boolean isOnProductPage() {
+    public boolean isOnProductPage() {
         try {
             driver.findElement(addToCartBtn);
             return true;
@@ -87,6 +114,9 @@ public class ProductPageTest {
             List<WebElement> listingProducts = driver.findElements(
                     AppiumBy.androidUIAutomator("new UiSelector().description(\"image\")")
             );
+            if (listingProducts.isEmpty()) {
+                listingProducts = driver.findElements(productFromHomeFallback);
+            }
 
             if (listingProducts.size() > 0) {
                 listingProducts.get(0).click();

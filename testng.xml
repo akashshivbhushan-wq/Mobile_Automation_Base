@@ -5,7 +5,8 @@
 
     <test name="App Tests">
         <classes>
-            <class name="magenative.automation.Test1"/>
+            <class name="magenative.automation.Test1">
+            </class>
         </classes>
     </test>
 </suite>

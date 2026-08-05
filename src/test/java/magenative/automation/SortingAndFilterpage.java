@@ -17,7 +17,13 @@ public class SortingAndFilterpage {
 
     // ===== Common Locators =====
     private By viewAllBtn = By.id("actiontext");
+    // Some app builds expose card/banner images via content-desc="image"; others
+    // (e.g. York Laine) never set a content-desc and only expose resource-id
+    // ".../id/image" instead. Try accessibility-id first, then fall back.
     private By bannerImage = AppiumBy.accessibilityId("image");
+    private By bannerImageFallback = By.xpath(
+            "//*[contains(@resource-id,':id/image') and not(ancestor::*[contains(@resource-id,'nav_view')])]"
+    );
     private By sortBtn = By.id("sort_but");
     private By aToZOption = By.id("atoz");
     private By filterBtn = By.id("filter_icon");
@@ -44,7 +50,13 @@ public class SortingAndFilterpage {
                 System.out.println("✅ Clicked 'View All' to open Listing Page");
             } catch (Exception e) {
                 System.out.println("⚠️ 'View All' not found, trying banner fallback...");
-                WebElement banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImage));
+                WebElement banner;
+                try {
+                    banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImage));
+                } catch (Exception e2) {
+                    System.out.println("⚠️ No content-desc=\"image\" banner found, trying resource-id fallback...");
+                    banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImageFallback));
+                }
                 banner.click();
                 System.out.println("✅ Clicked on banner to navigate to Listing Page");
             }

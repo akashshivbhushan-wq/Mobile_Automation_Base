@@ -50,11 +50,10 @@ public class BaseSignUP {
         Thread.sleep(1000);
     }
 
-    // 4. Fill field without clicking (keyboard open avoid)
+    // 4. Fill field without clicking
     private void setFieldValue(By locator, String value, String fieldName) throws InterruptedException {
         try {
             WebElement field = waitAndFind(locator);
-            // Direct sendKeys without click
             field.sendKeys(value);
             System.out.println(fieldName + " set: " + value);
             Thread.sleep(500);
@@ -83,14 +82,14 @@ public class BaseSignUP {
         setFieldValue(By.xpath("//android.widget.EditText[contains(@resource-id,'Confirm_password')]"), confirmPassword, "Confirm Password");
     }
 
- /// Click Register button (robust version) with duplicate email handling
+    // 5. Click Register button
     public void clickRegister() throws InterruptedException {
         System.out.println("Clicking Register button...");
 
         By idLocator = By.id("com.evacosmetics.app:id/MageNative_register");
         boolean clicked = false;
 
-        // 1️⃣ Try by common ID
+        // Try by common ID
         try {
             WebElement registerBtn = wait.until(ExpectedConditions.elementToBeClickable(idLocator));
             registerBtn.click();
@@ -100,7 +99,7 @@ public class BaseSignUP {
             System.out.println("⚠️ Register button not found by ID, trying by text + class");
         }
 
-        // 2️⃣ Fallback: class + text
+        // Fallback: class + text
         if (!clicked) {
             try {
                 By classTextLocator = By.xpath("//android.widget.Button[contains(@text,'Create new account')]");
@@ -114,31 +113,26 @@ public class BaseSignUP {
         }
 
         if (clicked) {
-            Thread.sleep(2000); // wait a bit for server response
+            Thread.sleep(2000); // wait for server response
 
-            // 3️⃣ Check for duplicate email message
-            try {
-                By duplicateMsg = By.xpath("//*[contains(@text,'already') or contains(@text,'taken') or contains(@text,'used')]");
-                WebElement msg = wait.until(ExpectedConditions.presenceOfElementLocated(duplicateMsg));
-                System.out.println("⚠️ Signup failed: " + msg.getText());
-            } catch (Exception e) {
-                System.out.println("✅ No duplicate email message, signup successful");
+            // Check duplicate email
+            if (isEmailAlreadyExists()) {
+                System.out.println("⚠️ Signup failed: Email already exists");
+            } else {
+                System.out.println("✅ No duplicate email message, signup attempted");
             }
 
-            // 4️⃣ Wait for home page to load
-            try {
-                By homePageLocator = By.xpath("//*[contains(@resource-id,'home') or contains(@text,'Home')]");
-                wait.until(ExpectedConditions.presenceOfElementLocated(homePageLocator));
+            // Wait for home page
+            if (isSignupSuccess()) {
                 System.out.println("✅ Home page loaded successfully");
-            } catch (Exception e) {
-                System.out.println("⚠️ Home page did not load: " + e.getMessage());
+            } else {
+                System.out.println("⚠️ Home page did not load after signup");
             }
+
         } else {
             System.out.println("❌ Could not click Register button, signup failed");
         }
     }
-
-
 
     // 6. Complete Signup Flow
     public void doCompleteSignup(String firstName, String lastName, String email, String password, String confirmPassword) throws InterruptedException {
@@ -152,5 +146,31 @@ public class BaseSignUP {
         enterConfirmPassword(confirmPassword);
         clickRegister();
         System.out.println("✅ Signup flow completed, app stays on the page");
+    }
+
+    // =========================================================
+    // 7. Helper: Check if email already exists
+    // =========================================================
+    public boolean isEmailAlreadyExists() {
+        try {
+            By duplicateMsg = By.xpath("//*[contains(@text,'already') or contains(@text,'taken') or contains(@text,'used')]");
+            WebElement msg = driver.findElement(duplicateMsg);
+            return msg.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // =========================================================
+    // 8. Helper: Check if signup is successful
+    // =========================================================
+    public boolean isSignupSuccess() {
+        try {
+            By homePageLocator = By.xpath("//*[contains(@resource-id,'home') or contains(@text,'Home')]");
+            WebElement home = driver.findElement(homePageLocator);
+            return home.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

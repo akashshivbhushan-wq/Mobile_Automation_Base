@@ -17,7 +17,13 @@ public class ProductListing {
 
     // ===== Common Locators =====
     private By viewAllBtn = By.id("actiontext"); // View All button on homepage
+    // Some app builds expose card/banner images via content-desc="image"; others
+    // (e.g. York Laine) never set a content-desc and only expose resource-id
+    // ".../id/image" instead. Try accessibility-id first, then fall back.
     private By bannerImage = AppiumBy.accessibilityId("image"); // fallback if View All not present
+    private By bannerImageFallback = By.xpath(
+            "//*[contains(@resource-id,':id/image') and not(ancestor::*[contains(@resource-id,'nav_view')])]"
+    );
     private By productName = By.xpath("//android.widget.TextView[contains(@resource-id,'name')]");
     private By productPrice = By.xpath("//android.widget.TextView[contains(@resource-id,'specialprice')]");
     private By wishlistIcon = By.xpath("//android.widget.ImageView[contains(@resource-id,'wishlist_but')]");
@@ -42,7 +48,13 @@ public class ProductListing {
                 System.out.println("✅ Clicked on 'View All'");
             } catch (Exception e) {
                 System.out.println("⚠️ 'View All' not found, using banner fallback...");
-                WebElement banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImage));
+                WebElement banner;
+                try {
+                    banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImage));
+                } catch (Exception e2) {
+                    System.out.println("⚠️ No content-desc=\"image\" banner found, trying resource-id fallback...");
+                    banner = wait.until(ExpectedConditions.elementToBeClickable(bannerImageFallback));
+                }
                 banner.click();
                 System.out.println("✅ Clicked on banner to open Listing Page");
             }

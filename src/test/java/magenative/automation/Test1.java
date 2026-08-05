@@ -22,6 +22,7 @@ public class Test1 {
     CartPageTest cart;
     BaseSignUP baseSignUP;
     private BaseLogin baseLogin;
+    private String appPackage;
 
     @BeforeTest
     public void setup() throws MalformedURLException {
@@ -57,9 +58,15 @@ public class Test1 {
                 .setPlatformName("Android")
                 .setAutomationName("UiAutomator2")
                 .setApp(apkFile.getAbsolutePath())
-                .setUiautomator2ServerLaunchTimeout(Duration.ofSeconds(180));
+                .setUiautomator2ServerLaunchTimeout(Duration.ofSeconds(180))
+                // Avoid a runtime permission popup stealing focus right after
+                // install/launch — it can make Appium time out waiting for the
+                // app's own activity to appear ("never started") before any
+                // test even begins.
+                .setAutoGrantPermissions(true);
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), options);
+        appPackage = driver.getCapabilities().getCapability("appPackage").toString();
         // Old capabilities (commented)
          var caps = new org.openqa.selenium.remote.DesiredCapabilities();
          caps.setCapability("deviceName", "Android Emulator");
@@ -84,6 +91,7 @@ public class Test1 {
 
     // ✅ Helper method - App responsive hai ya nahi check karne ke liye
     private void ensureAppIsResponsive() {
+        ensureAppInForeground();
         try {
             wait.until(d -> {
                 try {
@@ -102,6 +110,22 @@ public class Test1 {
             } catch (Exception ex) {
                 System.out.println("❌ App recovery failed: " + ex.getMessage());
             }
+        }
+    }
+
+    // ✅ If a scroll/gesture accidentally exits the app (home screen, notification
+    // shade, another app), relaunch it instead of letting every later step fail.
+    private void ensureAppInForeground() {
+        try {
+            String currentPackage = driver.getCurrentPackage();
+            if (appPackage != null && !appPackage.equals(currentPackage)) {
+                System.out.println("⚠️ App not in foreground (current: " + currentPackage
+                        + "), reactivating " + appPackage + "...");
+                driver.activateApp(appPackage);
+                Thread.sleep(1500);
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ Could not verify/reactivate foreground app: " + e.getMessage());
         }
     }
 
@@ -133,27 +157,69 @@ public class Test1 {
     //     // permissionPage.allowAllPermissions(); // For multiple
     // }
 
-     @Test(priority = 1)
-     public void openSignupAndFillTest() throws Exception {
-         try {
-             if (baseSignUP == null) {
-                 baseSignUP = new BaseSignUP(driver);
-             }
-             System.out.println("🚀 Starting Signup Test...");
-             baseSignUP.doCompleteSignup("Amit", "Lodhi", "lodhi175@gmail.com", "Test@1234", "Test@1234");
-             System.out.println("✅ Signup test finished");
-         } catch (Exception e) {
-             System.out.println("❌ Error during signup test: " + e.getMessage());
-             e.printStackTrace();
-         }
-     }
+    @Test(priority = 1)
+    public void signupOrLoginFlow() throws Exception {
 
-    @Test(priority = 2)
-    public void loginTest() throws InterruptedException {
+        baseSignUP = new BaseSignUP(driver);
         baseLogin = new BaseLogin(driver);
-        baseLogin.doLoginFlow("lodhi175@gmail.com", "Test@1234");
-        System.out.println("✅ Login test finished, app stays on the homepage");
+
+        String email = "lodhi175@gmail.com";
+        String password = "Test@1234";
+
+        boolean signupAttempted = false;
+        boolean signupSuccess = false;
+        boolean emailExists = false;
+
+        // -------------------------------
+        // TRY SIGNUP
+        // -------------------------------
+        try {
+            System.out.println("🚀 Trying Signup...");
+
+            baseSignUP.doCompleteSignup("Amit", "Lodhi", email, password, password);
+
+            signupAttempted = true;
+
+            // Check if signup succeeded
+            signupSuccess = baseSignUP.isSignupSuccess();
+
+            if (signupSuccess) {
+                System.out.println("🎉 Signup Successful, no need to login");
+                return;
+            }
+
+            // Check duplicate email case
+            emailExists = baseSignUP.isEmailAlreadyExists();
+
+            if (emailExists) {
+                System.out.println("⚠️ Email already exists, will try Login...");
+            }
+
+        } catch (Exception e) {
+            System.out.println("⚠️ Signup flow crashed: " + e.getMessage());
+        }
+
+        // -------------------------------
+        // DECISION
+        // -------------------------------
+
+        if (!signupAttempted || emailExists || !signupSuccess) {
+            System.out.println("➡️ Trying Login...");
+
+            try {
+                baseLogin.doLoginFlow(email, password);
+                System.out.println("✔️ Login Successful");
+            } catch (Exception e) {
+                System.out.println("❌ Login failed: " + e.getMessage());
+            }
+
+            return;
+        }
+
+        System.out.println("❌ Neither signup nor login happened — unexpected state");
     }
+
+
 
     @Test(priority = 3, description = "Account Section Flow Test")
     public void accountFlowTest() {

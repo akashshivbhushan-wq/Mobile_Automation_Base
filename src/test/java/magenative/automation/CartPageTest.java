@@ -28,6 +28,23 @@ public class CartPageTest {
         return appPackage + ":id/" + id;
     }
 
+    // --- If a scroll/gesture kicks the app to the home screen, notification
+    // shade, or another app, relaunch it before the next step wastes time
+    // searching a screen that no longer belongs to the app under test. ---
+    private void ensureForeground() {
+        try {
+            String currentPackage = driver.getCurrentPackage();
+            if (appPackage != null && !appPackage.equals(currentPackage)) {
+                System.out.println("⚠️ Lost app foreground (current: " + currentPackage
+                        + "), reactivating " + appPackage + "...");
+                driver.activateApp(appPackage);
+                Thread.sleep(1500);
+            }
+        } catch (Exception e) {
+            System.out.println("⚠️ Could not verify/reactivate foreground app: " + e.getMessage());
+        }
+    }
+
     // ==================== STEP 1: SELECT PRODUCT FROM HOMEPAGE / LISTING WITH STOCK CHECK ====================
     public void selectProductFromHomeWithStockCheck() {
         boolean productSelected = false;
@@ -137,6 +154,7 @@ public class CartPageTest {
 
     // ==================== STEP 2: SELECT ALL VARIANTS (Colour / Size / Year) ====================
     public void selectAllVariantsIfAvailable() {
+        ensureForeground();
         try {
             System.out.println("➡ Checking for variants...");
             // Scroll to first variant
@@ -170,6 +188,7 @@ public class CartPageTest {
 
     // ==================== STEP 3: CLICK WISHLIST ICON ====================
     public void clickWishlistIcon() {
+        ensureForeground();
         try {
             driver.findElement(AppiumBy.androidUIAutomator(
                     "new UiScrollable(new UiSelector().scrollable(true)).scrollToEnd(3)"
@@ -186,6 +205,7 @@ public class CartPageTest {
 
     // ==================== STEP 4: ADD TO CART ====================
     public void addToCart() {
+        ensureForeground();
         try {
             WebElement addBtn = wait.until(ExpectedConditions.elementToBeClickable(
                     AppiumBy.id(id("addtocart"))));
@@ -198,6 +218,7 @@ public class CartPageTest {
 
     // ==================== STEP 5: GO TO CART ====================
     public void goToCart() {
+        ensureForeground();
         try {
             WebElement cartBtn = wait.until(ExpectedConditions.elementToBeClickable(
                     AppiumBy.id(id("cartsection"))));
@@ -250,6 +271,7 @@ public class CartPageTest {
     }
     // ==================== STEP 8: PROCEED TO CHECKOUT ====================
     public void proceedToCheckout() {
+        ensureForeground();
         try {
             WebElement checkout = wait.until(ExpectedConditions.elementToBeClickable(
                     AppiumBy.id(id("proceedtocheck"))));
